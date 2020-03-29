@@ -35,9 +35,9 @@ class Set {
     }
     
     func hasSet(ChoosedCards : [Card]) -> Bool {
-       for card in ChoosedCards {
-           print(card.color.cgColor.hashValue)
-       }
+        guard ChoosedCards.count == 3 else {
+            return false
+        }
         if ( compareForSet(ChoosedCards[0].color.hashValue, ChoosedCards[1].color.hashValue, ChoosedCards[2].color.hashValue)
             &&
             compareForSet(ChoosedCards[0].numSymbols, ChoosedCards[1].numSymbols, ChoosedCards[2].numSymbols)
@@ -50,7 +50,6 @@ class Set {
                         card.inSet = true
                 }
                 return true
-            
         }
         
         return false
@@ -62,32 +61,40 @@ class Set {
         guard ChoosedCard != nil else {
             return false
         }
-        if ChoosedCard!.isMached {
+        
+        var cardsMatched = cards.filter({$0.isMached})
+    
+        
+        if ChoosedCard!.isMached && numChoosedCards < 3 {
             ChoosedCard!.isMached = false
             numChoosedCards -= 1
-        } else {
+        }
+        else if cardsMatched.count == 3 && !cardsMatched.contains(where: {$0.identidier == ChoosedCard!.identidier}){
+            for card in cardsMatched {
+                card.isMached = false
+            }
+            numChoosedCards -= 2
+            ChoosedCard!.isMached = true
+            
+            return false
+        }
+        else if !cardsMatched.contains(where: {$0.identidier == ChoosedCard!.identidier}){
             ChoosedCard!.isMached = true
             numChoosedCards += 1
+            cardsMatched.append(ChoosedCard!)
         }
         
-        guard numChoosedCards == 3 else {
+        guard numChoosedCards > 2 else {
             return false
         }
         
-        let cardsMatched = cards.filter({$0.isMached})
-        
         if hasSet(ChoosedCards: cardsMatched) {
             scope += 1
-            numChoosedCards = 0
             print("scope = \(scope)")
-            for card in cardsMatched {
-                       card.isMached = false
-            }
             return true
         }
-               
-        return false
         
+        return false
     }
     
     func getNewCardId() -> Int? {
@@ -104,10 +111,9 @@ class Set {
         
         if (property1 == property2 && property2 == property3)
            ||
-           (property1 != property2 && property1 != property2 && property2 != property3) {
+           (property1 != property2 && property1 != property3 && property2 != property3) {
             return true
         }
-   
         return false
         
     }
