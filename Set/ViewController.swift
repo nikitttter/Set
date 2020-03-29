@@ -14,9 +14,16 @@ class ViewController: UIViewController {
     var buttonsToCards = [Int : Int]()
     var newSet : Bool = false
     @IBOutlet var buttons: [UIButton]!
+    @IBOutlet weak var scopeLabel: UILabel!
+    
+   
     
     @IBAction func getNewCards(_ sender: UIButton) {
         if buttonsToCards.count > 2 && set.cards.filter({$0.enableForGet}).count > 2 {
+            if newSet {
+                set.unMatchCards()
+                newSet = false
+            }
             getNewCards(3)
             updateViewFromModel()
         }
@@ -29,29 +36,34 @@ class ViewController: UIViewController {
             if let idcard = buttonsToCards[idButton] {
                 let chekSet = set.chooseCard(identifier: idcard)
                 updateViewFromModel(chekSet)
+                
                 if (!chekSet && newSet) {
                     getNewCards(3)
                     updateViewFromModel()
+                }
+                else if chekSet {
+                    scopeLabel.text? = "Scope = \(set.scope)"
                 }
                 newSet = chekSet
             }
         }
     }
     
-    @IBAction func createNewGame(_ sender: UIButton) {
-        
-        buttonsToCards.removeAll()
-        set = Set()
-        for button in buttons {
-            button.setAttributedTitle(NSAttributedString(string: " ", attributes: nil), for: UIControl.State.normal)
-            button.backgroundColor = UIColor.white
-            button.layer.cornerRadius = 20.0
-            button.layer.borderWidth = 2
-            button.layer.borderColor = UIColor.white.cgColor
-        }
-        newSet = false
-        getNewCards(12)
-        updateViewFromModel()
+    @IBAction func newGame(_ sender: UIButton) {
+        createNewGame()
+//        buttonsToCards.removeAll()
+//        set = Set()
+//        for button in buttons {
+//            button.setAttributedTitle(NSAttributedString(string: " ", attributes: nil), for: UIControl.State.normal)
+//            button.backgroundColor = UIColor.white
+//            button.layer.cornerRadius = 20.0
+//            button.layer.borderWidth = 2
+//            button.layer.borderColor = UIColor.white.cgColor
+//        }
+//        newSet = false
+//        getNewCards(12)
+//        updateViewFromModel()
+//        scopeLabel.text? = "Scope = 0"
     }
     
     func updateViewFromModel(_ hasSet : Bool = false) {
@@ -106,6 +118,22 @@ class ViewController: UIViewController {
             }
         }
 
+    }
+    
+    func createNewGame() {
+        buttonsToCards.removeAll()
+             set = Set()
+             for button in buttons {
+                 button.setAttributedTitle(NSAttributedString(string: " ", attributes: nil), for: UIControl.State.normal)
+                 button.backgroundColor = UIColor.white
+                 button.layer.cornerRadius = 20.0
+                 button.layer.borderWidth = 2
+                 button.layer.borderColor = UIColor.white.cgColor
+             }
+             newSet = false
+             getNewCards(12)
+             updateViewFromModel()
+             scopeLabel.text? = "Scope = 0"
     }
 }
 

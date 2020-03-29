@@ -83,6 +83,9 @@ class Set {
             numChoosedCards += 1
             cardsMatched.append(ChoosedCard!)
         }
+        else if cardsMatched.filter({$0.inSet}).count == 3 {
+            return true
+        }
         
         guard numChoosedCards > 2 else {
             return false
@@ -116,5 +119,13 @@ class Set {
         }
         return false
         
+        
+    }
+    
+    func unMatchCards() {
+        for card in cards.filter({$0.isMached}) {
+            card.isMached = false
+        }
+        numChoosedCards = 0
     }
 }
